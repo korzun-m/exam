@@ -53,13 +53,13 @@ resource "aws_instance" "build_instance" {
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
-sudo apt update && sudo apt install -y openjdk-8-jdk maven awscli
-git clone https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
-cd boxfuse-sample-java-war-hello && mvn package
-export AWS_ACCESS_KEY_ID=<>
-export AWS_SECRET_ACCESS_KEY=<>
-export AWS_DEFAULT_REGION=us-east-2
-aws s3 cp target/hello-1.0.war s3://lession13
+#sudo apt update && sudo apt install -y openjdk-8-jdk maven awscli
+#git clone https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+#cd boxfuse-sample-java-war-hello && mvn package
+#export AWS_ACCESS_KEY_ID=<>
+#export AWS_SECRET_ACCESS_KEY=<>
+#export AWS_DEFAULT_REGION=us-east-2
+#aws s3 cp target/hello-1.0.war s3://lession13
 EOF
 
 }
@@ -72,13 +72,13 @@ resource "aws_instance" "prod_instance" {
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
-sudo apt update && sudo apt install -y openjdk-8-jdk tomcat9 awscli
-export AWS_ACCESS_KEY_ID=<>
-export AWS_SECRET_ACCESS_KEY=<>
-export AWS_DEFAULT_REGION=us-east-2
-aws s3 cp s3://lession13/hello-1.0.war /tmp/hello-1.0.war
-sudo mv /tmp/hello-1.0.war /var/lib/tomcat9/webapps/hello-1.0.war
-sudo systemctl restart tomcat8
+#sudo apt update && sudo apt install -y openjdk-8-jdk tomcat9 awscli
+#export AWS_ACCESS_KEY_ID=<>
+#export AWS_SECRET_ACCESS_KEY=<>
+#export AWS_DEFAULT_REGION=us-east-2
+#aws s3 cp s3://lession13/hello-1.0.war /tmp/hello-1.0.war
+#sudo mv /tmp/hello-1.0.war /var/lib/tomcat9/webapps/hello-1.0.war
+#sudo systemctl restart tomcat8
 EOF
 
 }
