@@ -83,12 +83,11 @@ EOF
 
 }
 
-rresource "local_file" "hosts_cfg" {
+resource "local_file" "hosts_cfg" {
   content = templatefile("${path.module}/inventory.tpl",
     {
       prod_ip = aws_instance.prod_instance.public_ip
       build_ip = aws_instance.build_instance.public_ip
     }
-  )
   filename = "hosts.cfg"
 }
