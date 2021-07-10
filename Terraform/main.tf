@@ -13,13 +13,13 @@ variable "image_id" {
   default = "ami-00399ec92321828f5"
 }
 
-resource "aws_key_pair" "lession14" {
-  key_name   = "lession14"
+resource "aws_key_pair" "key1" {
+  key_name   = "key1"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCXDS3XX69+B/jqvdUCttM5gB6Cz4bmepYbFgoCuJinbB3FH1g+aiyzbAdlt1Qr7vkTXBzareWrlUPdWlwiQbcK+eQzakVmB607G+ztSyra5KLLF55aM5K/68XdGRpJW1IwLZ6KfLRB/OumT6wKo5k8Q+UKOlHE0rzQQHPJjHg7cWyqJYeMHMEY72sO8Qo/xNs3h+OHdRlVLL91JGGZZ4ybnFRw0SyHQ3yy1dDCqN9iHzDhLk1ERExpwVqct4tcM0NcKdpxKQ0CC0XQKXRWPdgZd4c0ry4FeKSvMParhz7mKAx6fYyQLwRsE0e/gut+A55mggdof5HqPiUj8QRP1tFF"
 }
 
-resource "aws_security_group" "lession14" {
-  name        = "lession14"
+resource "aws_security_group" "group1" {
+  name        = "group1"
   vpc_id      = "${var.vpc_id}"
 
   ingress {
@@ -48,8 +48,8 @@ resource "aws_security_group" "lession14" {
 resource "aws_instance" "build_instance" {
   ami = "${var.image_id}"
   instance_type = "t2.micro"
-  key_name = "${aws_key_pair.lession14.key_name}"
-  vpc_security_group_ids = ["${aws_security_group.lession14.id}"]
+  key_name = "${aws_key_pair.key1.key_name}"
+  vpc_security_group_ids = ["${aws_security_group.group1.id}"]
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
@@ -67,8 +67,8 @@ EOF
 resource "aws_instance" "prod_instance" {
   ami = "${var.image_id}"
   instance_type = "t2.micro"
-  key_name = "${aws_key_pair.lession14.key_name}"
-  vpc_security_group_ids = ["${aws_security_group.lession14.id}"]
+  key_name = "${aws_key_pair.key1.key_name}"
+  vpc_security_group_ids = ["${aws_security_group.group1.id}"]
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
