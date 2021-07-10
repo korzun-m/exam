@@ -82,3 +82,23 @@ resource "aws_instance" "prod_instance" {
 EOF
 
 }
+
+data "template_file" "inventory" {
+    template = "${file("inventory.tpl")}"
+
+    vars {
+        build_ip = "${aws_instance.build_instance.public_ip}"
+        prod_ip = "${aws_instance.prod_instance.public_ip}"
+    }
+}
+
+resource "null_resource" "update_inventory" {
+
+    triggers {
+        template = "${data.template_file.inventory.rendered}"
+    }
+
+    provisioner "local-exec" {
+        command = "echo '${data.template_file.inventory.rendered}' > hosts.cfg"
+    }
+}
