@@ -13,8 +13,8 @@ variable "image_id" {
   default = "ami-00399ec92321828f5"
 }
 
-resource "aws_s3_bucket" "s3" {
-   bucket = "my-bucket-s3-000"
+resource "aws_s3_bucket" "kmi" {
+   bucket = "my-bucket-kmi"
    acl = "private"
    versioning {
     enabled = true
