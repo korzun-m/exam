@@ -20,7 +20,7 @@ hosts: build
     - name: Build an image and push
       docker_image:
         build:
-          path: ./Dockerfile/build_image
+          path: ../Dockerfile/build_image
         name: build:v1.0
         source: build
         state: present
