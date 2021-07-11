@@ -13,6 +13,14 @@ variable "image_id" {
   default = "ami-00399ec92321828f5"
 }
 
+backend "s3" {
+   bucket = "bucket1"
+   acl = "private"
+   versioning {
+    enabled = true
+   }
+}
+
 resource "tls_private_key" "key" {
  algorithm = "RSA"
  rsa_bits  = 4096
@@ -59,7 +67,7 @@ resource "aws_instance" "build_instance" {
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
-sudo apt update && sudo apt install -y docker.io python
+sudo apt update && sudo apt install -y python
 EOF
 }
 
@@ -71,7 +79,7 @@ resource "aws_instance" "prod_instance" {
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
-sudo apt update && sudo apt install -y docker.io python
+sudo apt update && sudo apt install -y python
 EOF
 }
 
