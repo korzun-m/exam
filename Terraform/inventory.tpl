@@ -1,6 +1,13 @@
-[build]
-${build_ip}
+build:
+ hosts:
+   ${build_ip}
+ vars:
+   ansible_ssh_user: ubuntu
+   ansible_ssh_private_key_file: ${ssh_keyfile}
 
-[prod]
-${prod_ip}
-
+prod:
+ hosts:
+   ${prod_ip}
+ vars:
+   ansible_ssh_user: ubuntu
+   ansible_ssh_private_key_file: ${ssh_keyfile}
