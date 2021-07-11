@@ -75,6 +75,7 @@ sudo apt update && sudo apt install -y docker.io python
 EOF
 }
 
+
 resource "local_file" "private_key" {
   sensitive_content = tls_private_key.key.private_key_pem
   filename          = format("%s/%s/%s", abspath(path.root), ".ssh", "aws-ssh-key.pem")
