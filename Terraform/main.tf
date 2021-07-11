@@ -14,7 +14,7 @@ variable "image_id" {
 }
 
 resource "aws_s3_bucket" "s3" {
-   bucket = "bucket1"
+   bucket = "my-bucket-s3-000"
    acl = "private"
    versioning {
     enabled = true
