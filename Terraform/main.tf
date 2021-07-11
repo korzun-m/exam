@@ -13,7 +13,7 @@ variable "image_id" {
   default = "ami-00399ec92321828f5"
 }
 
-backend "s3" {
+resource "aws_s3_bucket" "s3" {
    bucket = "bucket1"
    acl = "private"
    versioning {
