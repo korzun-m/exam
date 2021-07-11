@@ -90,5 +90,5 @@ resource "local_file" "ansible_inventory" {
       ssh_keyfile = local_file.private_key.filename
     }
   )
-  format("%s/%s", abspath(path.root), "inventory.yaml")
+   filename = format("%s/%s", abspath(path.root), "inventory.yaml")
 }
