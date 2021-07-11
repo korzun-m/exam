@@ -67,7 +67,7 @@ resource "aws_instance" "build_instance" {
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
-sudo apt update && sudo apt install -y python
+#sudo apt update && sudo apt install -y python
 EOF
 }
 
@@ -79,7 +79,7 @@ resource "aws_instance" "prod_instance" {
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
-sudo apt update && sudo apt install -y python
+#sudo apt update && sudo apt install -y python
 EOF
 }
 
