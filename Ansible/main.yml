@@ -1,5 +1,6 @@
 ---
-hosts: build
+- hosts: build
+  gather_facts: no
   remote_user: ubuntu
   become: yes
   tasks:
