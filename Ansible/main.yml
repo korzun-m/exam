@@ -25,5 +25,4 @@
         name: build:v1.0
         source: build
         state: present
-        volumes:
-          - /data
+
