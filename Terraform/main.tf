@@ -101,7 +101,7 @@ resource "aws_iam_policy" "ec2_s3-policy" {
 EOF
 }
 
-resource "aws_iam_policy_attachment" "ec2_s3-attach" {
+resource "aws_iam_role_policy_attachment" "ec2_s3-attach" {
   name       = "ec2_s3-attachment"
   role      = "${aws_iam_role.ec2_s3_role.name}"
   policy_arn = "${aws_iam_policy.ec2_s3-policy.arn}"
