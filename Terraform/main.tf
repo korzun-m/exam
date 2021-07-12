@@ -59,11 +59,65 @@ resource "aws_security_group" "group1" {
 
 }
 
+resource "aws_iam_role" "ec2_s3_role" {
+  name = "ec2_s3_role"
+  assume_role_policy = <<EOF
+{
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Action": "sts:AssumeRole",
+     "Principal": {
+       "Service": "ec2.amazonaws.com"
+     },
+     "Effect": "Allow",
+     "Sid": ""
+   }
+ ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "ec2_s3-policy" {
+  name        = "ec2_s3-policy"
+  description = "A test policy"
+  policy      = <<EOF
+{
+ "Version": "2012-10-17",
+ "Statement": [
+    {
+      "Sid": "AccessObject",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::my-bucket-kmi"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "ec2_s3-attach" {
+  name       = "ec2_s3-attachment"
+  roles      = ["${aws_iam_role.ec2_s3_role.name}"]
+  policy_arn = "${aws_iam_policy.ec2_s3-policy.arn}"
+}
+
+resource "aws_iam_instance_profile" "ec2_s3_profile" {
+  name  = "ec2_s3_profile"
+  roles = ["${aws_iam_role.ec2_s3_role.name}"]
+}
+
 resource "aws_instance" "build_instance" {
   ami = "${var.image_id}"
   instance_type = "t2.micro"
   key_name = aws_key_pair.aws_key.key_name
   vpc_security_group_ids = ["${aws_security_group.group1.id}"]
+  iam_instance_profile = "${aws_iam_instance_profile.ec2_s3_profile.name}"
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
@@ -76,6 +130,7 @@ resource "aws_instance" "prod_instance" {
   instance_type = "t2.micro"
   key_name = aws_key_pair.aws_key.key_name
   vpc_security_group_ids = ["${aws_security_group.group1.id}"]
+  iam_instance_profile = "${aws_iam_instance_profile.ec2_s3_profile.name}"
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
 #!/bin/bash
