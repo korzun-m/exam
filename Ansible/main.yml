@@ -4,26 +4,31 @@
   remote_user: ubuntu
   become: yes
   tasks:
+    - name: upload the site directory to the docker host
+      synchronize: src=Dockerfiles dest=/tmp
     - name: Install docker and some dependencies
       apt:
-        name: python3-pip, docker.io
+        name: python3-pip, docker.io, awscli
         state: present
         update_cache: yes
-
     - name: Start docker service
       service:
         name: docker
         state: started
-
     - name: Install docker python module
       pip:
         name: docker
-
     - name: Build an image and push
-      docker_image:
+      community.docker.docker_image:
         build:
-          path: ../Dockerfile/build_image
-        name: build:v1.0
-        source: build
+          path: /tmp/Dockerfiles/build_image
+        name: build
         state: present
-
+        source: build
+    - name: run the site in a docker container
+      docker_container:
+        name: build
+        image: build
+        state: started
+        volumes:
+          - /data
