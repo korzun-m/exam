@@ -93,7 +93,7 @@ resource "aws_iam_policy" "ec2_s3-policy" {
         "s3:GetObject"
       ],
       "Resource": [
-        "arn:aws:s3:::my-bucket-kmi"
+        "arn:aws:s3:::my-bucket-kmi/*"
       ]
     }
   ]

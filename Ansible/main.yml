@@ -19,7 +19,7 @@
       pip:
         name: docker
     - name: Build an image and push
-      community.docker.docker_image:
+      docker_image:
         build:
           path: /tmp/Dockerfiles/build_image
         name: build
