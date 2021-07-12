@@ -103,13 +103,13 @@ EOF
 
 resource "aws_iam_policy_attachment" "ec2_s3-attach" {
   name       = "ec2_s3-attachment"
-  role      = ["${aws_iam_role.ec2_s3_role.name}"]
+  role      = "${aws_iam_role.ec2_s3_role.name}"
   policy_arn = "${aws_iam_policy.ec2_s3-policy.arn}"
 }
 
 resource "aws_iam_instance_profile" "ec2_s3_profile" {
   name  = "ec2_s3_profile"
-  role = ["${aws_iam_role.ec2_s3_role.name}"]
+  role = "${aws_iam_role.ec2_s3_role.name}"
 }
 
 resource "aws_instance" "build_instance" {
