@@ -25,10 +25,24 @@
         name: build
         state: present
         source: build
-    - name: run the site in a docker container
+    - name: run the build in a docker container
       docker_container:
         name: build
         image: build
         state: started
         volumes:
           - /data
+    - name: docker volume inspect
+        command: docker volume inspect --format '{{ .Mountpoint }}' data
+        register: data_inspect
+    - name: Wait until the string "completed" is in the file foo before continuing
+      wait_for:
+        path: '{{ data_inspect }}/foo'
+        search_regex: completed
+    - name: run the prod in a docker container
+        docker_container:
+          name: prod
+          image: build
+          state: started
+          volumes:
+            - /data1

@@ -7,3 +7,5 @@ RUN git clone https://github.com/boxfuse/boxfuse-sample-java-war-hello.git /tmp/
 RUN mvn -f /tmp/boxfuse-sample-java-war-hello/pom.xml package
 RUN mkdir /data
 RUN cp /tmp/boxfuse-sample-java-war-hello/target/hello-*.war /data
+RUN touch /data/foo
+RUN echo 123 > /data/foo
