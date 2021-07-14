@@ -39,7 +39,7 @@ resource "aws_security_group" "build_group" {
   }
 
   ingress {
-    description = "ssh"
+    description = "ssh access"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -59,7 +59,7 @@ resource "aws_security_group" "prod_group" {
   vpc_id      = "${var.vpc_id}"
 
   ingress {
-    description = "tomcat port"
+    description = "tomcat access"
     from_port   = 0
     to_port     = 8080
     protocol    = "tcp"
@@ -67,6 +67,7 @@ resource "aws_security_group" "prod_group" {
   }
 
   ingress {
+    description = "ssh access"
     description = "ssh"
     from_port   = 22
     to_port     = 22
