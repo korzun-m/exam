@@ -9,6 +9,7 @@ variable "subnet_id" {
 variable "vpc_id" {
   default = "vpc-374d285c"
 }
+
 variable "image_id" {
   default = "ami-00399ec92321828f5"
 }
@@ -28,7 +29,7 @@ resource "tls_private_key" "key" {
 
 resource "aws_key_pair" "aws_key" {
  key_name   = "aws-ssh-key"
- public_key = tls_private_key.key.public_key_openssh
+ public_key = "tls_private_key.key.public_key_openssh"
 }
 
 resource "aws_security_group" "build_group" {
@@ -36,6 +37,7 @@ resource "aws_security_group" "build_group" {
   vpc_id      = "${var.vpc_id}"
 
   }
+
   ingress {
     description = "ssh"
     from_port   = 22
@@ -43,6 +45,7 @@ resource "aws_security_group" "build_group" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -62,6 +65,7 @@ resource "aws_security_group" "prod_group" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   ingress {
     description = "ssh"
     from_port   = 22
@@ -69,6 +73,7 @@ resource "aws_security_group" "prod_group" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   egress {
     from_port   = 0
     to_port     = 0
