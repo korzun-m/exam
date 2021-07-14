@@ -67,7 +67,6 @@ resource "aws_security_group" "prod_group" {
 
   ingress {
     description = "ssh access"
-    description = "ssh"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
