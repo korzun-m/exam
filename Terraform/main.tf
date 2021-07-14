@@ -29,7 +29,7 @@ resource "tls_private_key" "key" {
 
 resource "aws_key_pair" "aws_key" {
  key_name   = "aws-ssh-key"
- public_key = "tls_private_key.key.public_key_openssh"
+ public_key = tls_private_key.key.public_key_openssh
 }
 
 resource "aws_security_group" "build_group" {
