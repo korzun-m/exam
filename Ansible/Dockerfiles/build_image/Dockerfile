@@ -1,11 +1,9 @@
-FROM ubuntu:20.04
-ENV TZ=Europe/Moscow
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+FROM openjdk:7
 RUN apt update -y
-RUN apt install -y default-jdk maven git
+RUN apt install -y maven git
 RUN git clone https://github.com/boxfuse/boxfuse-sample-java-war-hello.git /tmp/boxfuse-sample-java-war-hello
 RUN mvn -f /tmp/boxfuse-sample-java-war-hello/pom.xml package
-RUN mkdir /data
-RUN cp /tmp/boxfuse-sample-java-war-hello/target/hello-*.war /data
-RUN touch /data/foo
-RUN echo 123 > /data/foo
+RUN mkdir /var/build_data
+COPY cp_app.sh /etc
+RUN chmod +x /etc/cp_app.sh
+CMD ["/etc/cp_app.sh"]

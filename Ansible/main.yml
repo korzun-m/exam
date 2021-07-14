@@ -1,7 +1,6 @@
 ---
-- hosts: build
+- hosts: all
   gather_facts: no
-  remote_user: ubuntu
   become: yes
   tasks:
     - name: upload the site directory to the docker host
@@ -18,31 +17,36 @@
     - name: Install docker python module
       pip:
         name: docker
-    - name: Build an image and push
-      docker_image:
-        build:
-          path: /tmp/Dockerfiles/build_image
-        name: build
-        state: present
-        source: build
+- hosts: build
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Creating build image
+      shell: docker build --no-cache -t build /tmp/Dockerfiles/build_image
     - name: run the build in a docker container
       docker_container:
         name: build
         image: build
+        auto_remove: yes
+        state: started
+        volumes: /var/lib/docker/volumes/build:/var/build_data
+    - name: docker_repository - Log into ECR registry and force re-authorization
+      shell: aws s3 sync /var/lib/docker/volumes/build s3://my-bucket-kmi/build
+    - name: remove ibuild image
+      shell: docker rmi build
+- hosts: prod
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: run the prod in a docker container
+      docker_container:
+        name: prod
+        image: tomcat:9.0
+        ports:
+          - "8080:8080"
+        recreate: yes
         state: started
         volumes:
-          - /data
-    - name: docker volume inspect
-        command: docker volume inspect --format '{{ .Mountpoint }}' data
-        register: data_inspect
-    - name: Wait until the string "completed" is in the file foo before continuing
-      wait_for:
-        path: '{{ data_inspect }}/foo'
-        search_regex: completed
-    - name: run the prod in a docker container
-        docker_container:
-          name: prod
-          image: build
-          state: started
-          volumes:
-            - /data1
+          - /var/lib/docker/volumes/build:/usr/local/tomcat/webapps
+    - name: docker_repository - Log into ECR registry
+      shell: aws s3 sync s3://my-bucket-kmi/build /var/lib/docker/volumes/build

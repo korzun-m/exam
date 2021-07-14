@@ -31,15 +31,34 @@ resource "aws_key_pair" "aws_key" {
  public_key = tls_private_key.key.public_key_openssh
 }
 
+resource "aws_security_group" "build_group" {
+  name        = "build_group"
+  vpc_id      = "${var.vpc_id}"
 
-resource "aws_security_group" "group1" {
-  name        = "group1"
+  }
+  ingress {
+    description = "ssh"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "prod_group" {
+  name        = "prod_group"
   vpc_id      = "${var.vpc_id}"
 
   ingress {
-    description = "app from anywhere"
+    description = "tomcat port"
     from_port   = 0
-    to_port     = 0
+    to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -53,52 +72,19 @@ resource "aws_security_group" "group1" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
 }
 
 resource "aws_iam_role" "ec2_s3_role" {
   name = "ec2_s3_role"
-  assume_role_policy = <<EOF
-{
- "Version": "2012-10-17",
- "Statement": [
-   {
-     "Action": "sts:AssumeRole",
-     "Principal": {
-       "Service": "ec2.amazonaws.com"
-     },
-     "Effect": "Allow",
-     "Sid": ""
-   }
- ]
-}
-EOF
+  assume_role_policy = "${file("ec2_s3_rolepolicy.json")}"
 }
 
 resource "aws_iam_policy" "ec2_s3-policy" {
   name        = "ec2_s3-policy"
-  description = "A test policy"
-  policy      = <<EOF
-{
- "Version": "2012-10-17",
- "Statement": [
-    {
-      "Sid": "AccessObject",
-      "Effect": "Allow",
-      "Action": [
-        "s3:PutObject",
-        "s3:GetObject"
-      ],
-      "Resource": [
-        "arn:aws:s3:::my-bucket-kmi/*"
-      ]
-    }
-  ]
-}
-EOF
+  policy      = "${file("policys3bucket.json")}"
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_s3-attach" {
@@ -115,7 +101,7 @@ resource "aws_instance" "build_instance" {
   ami = "${var.image_id}"
   instance_type = "t2.micro"
   key_name = aws_key_pair.aws_key.key_name
-  vpc_security_group_ids = ["${aws_security_group.group1.id}"]
+  vpc_security_group_ids = ["${aws_security_group.build_group.id}"]
   iam_instance_profile = "${aws_iam_instance_profile.ec2_s3_profile.name}"
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
@@ -128,7 +114,7 @@ resource "aws_instance" "prod_instance" {
   ami = "${var.image_id}"
   instance_type = "t2.micro"
   key_name = aws_key_pair.aws_key.key_name
-  vpc_security_group_ids = ["${aws_security_group.group1.id}"]
+  vpc_security_group_ids = ["${aws_security_group.prod_group.id}"]
   iam_instance_profile = "${aws_iam_instance_profile.ec2_s3_profile.name}"
   subnet_id = "${var.subnet_id}"
   user_data = <<EOF
@@ -136,7 +122,6 @@ resource "aws_instance" "prod_instance" {
 #sudo apt update && sudo apt install -y python
 EOF
 }
-
 
 resource "local_file" "private_key" {
   sensitive_content = tls_private_key.key.private_key_pem
