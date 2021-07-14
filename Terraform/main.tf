@@ -36,7 +36,6 @@ resource "aws_security_group" "build_group" {
   name        = "build_group"
   vpc_id      = "${var.vpc_id}"
 
-  }
 
   ingress {
     description = "ssh access"
